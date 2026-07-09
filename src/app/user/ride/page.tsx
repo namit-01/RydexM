@@ -69,6 +69,7 @@ const Page = () => {
   const [pickUpPos, setPickUpPos] = useState<[number, number] | null>(null);
   const [dropPos, setDropPos] = useState<[number, number] | null>(null);
   const [showChat, setShowChat] = useState(false);
+  const router = useRouter();
   const { userData } = useSelector((state: any) => state.user);
   const fetchActiveRide = async () => {
     try {
@@ -300,7 +301,7 @@ const Page = () => {
     );
   }
   const cfg = STATUS_LABEL[booking?.bookingStatus! ?? "confirmed"];
-  const router = useRouter();
+
   if (showChat) {
     return (
       <RideChat
