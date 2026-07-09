@@ -4,5 +4,6 @@ export const getSocket = () => {
   if (!socket) {
     socket = io(process.env.NEXT_PUBLIC_SOCKET_SERVER_URL);
   }
+  console.log(socket)
   return socket;
 };
