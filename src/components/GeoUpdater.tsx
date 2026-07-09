@@ -11,11 +11,13 @@ const GeoUpdater = ({ userId }: { userId: string }) => {
       return;
     }
     socketRef.current = getSocket();
-    socketRef.current.emit("identity", { userId: userId });
+
     socketRef.current.on("connect", () => {
       console.log("Connected:", socketRef.current.id);
       socketRef.current.emit("identity", { userId });
     });
+    console.log(socketRef.current.io.uri);
+    console.log(socketRef.current.io.engine.transport.name);
 
     socketRef.current.on("connect_error", (err: Error) => {
       console.log(err);
