@@ -48,7 +48,13 @@ const HeroSection = ({ onAuthrequired }) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="mt-12 px-10 py-4 bg-white text-black rounded-full font-semibold shadow-xl"
-            onClick={() => router.push("/user/book")}
+            onClick={() => {
+              if (!userData) {
+                onAuthrequired?.(); // Login required modal/toast
+                return;
+              }
+              router.push("/user/book");
+            }}
           >
             Book Now
           </motion.button>

@@ -11,7 +11,7 @@ import { ChevronRight, ChevronRightIcon, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { setUserData } from "@/redux/userSlice";
 import axios from "axios";
-const Nav_items = ["Home", "Bookings", "aboutus", "Contact"];
+const Nav_items = ["Home", "aboutus", "Contact"];
 const Nav = () => {
   const pathName = usePathname();
   const router = useRouter();
