@@ -12,9 +12,14 @@ const GeoUpdater = ({ userId }: { userId: string }) => {
     }
     socketRef.current = getSocket();
     socketRef.current.emit("identity", { userId: userId });
-    console.log(socketRef.current?.io.uri);
-    console.log(socketRef.current?.id);
-    console.log(socketRef.current?.connected);
+    socketRef.current.on("connect", () => {
+      console.log("Connected:", socketRef.current.id);
+      socketRef.current.emit("identity", { userId });
+    });
+
+    socketRef.current.on("connect_error", (err: Error) => {
+      console.log(err);
+    });
     const watcher = navigator.geolocation.watchPosition(
       (position) => {
         socketRef.current.emit("update-location", {
