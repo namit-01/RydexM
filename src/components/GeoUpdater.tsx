@@ -18,7 +18,9 @@ const GeoUpdater = ({ userId }: { userId: string }) => {
     });
     console.log(socketRef.current.io.uri);
     console.log(socketRef.current.io.engine.transport.name);
-
+    setTimeout(() => {
+      console.log(socketRef.current.io.engine.transport.name);
+    }, 3000);
     socketRef.current.on("connect_error", (err: Error) => {
       console.log(err);
     });
