@@ -11,12 +11,19 @@ import User from "@/models/user.model";
 
 export default async function Home() {
   const session = await auth();
+
   await connectDb();
-  const user = await User.findOne({ email: session?.user?.email });
-  const plainUser = JSON.parse(JSON.stringify(user));
+
+  let user = null;
+
+  if (session?.user?.email) {
+    user = await User.findOne({ email: session.user.email });
+  }
+
+  const plainUser = user ? JSON.parse(JSON.stringify(user)) : null;
   return (
     <div className="w-full min-h-screen bg-white">
-      <GeoUpdater userId={String(user._id)} />
+      {plainUser && <GeoUpdater userId={String(plainUser._id)} />}
       {plainUser?.role == "partner" ? (
         <>
           <Nav />
