@@ -154,6 +154,151 @@ const Page = () => {
       </div>
     );
   }
+  if (!booking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-black flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+          className="w-full max-w-md rounded-3xl bg-white shadow-2xl p-8 text-center"
+        >
+          <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100">
+            <svg
+              className="h-12 w-12 text-zinc-500"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M8 17l4 4 4-4m-4-5v9M4 5h16"
+              />
+            </svg>
+          </div>
+
+          <h2 className="mt-6 text-3xl font-bold text-zinc-900">
+            No Active Ride
+          </h2>
+
+          <p className="mt-3 text-sm text-zinc-500 leading-6">
+            You're currently not assigned to any ride. New ride requests will
+            appear here automatically.
+          </p>
+
+          <div className="mt-8 rounded-2xl bg-zinc-100 p-5 text-left">
+            <div className="flex justify-between">
+              <span className="text-zinc-500">Status</span>
+              <span className="font-semibold text-emerald-600">Available</span>
+            </div>
+
+            <div className="mt-4 flex justify-between">
+              <span className="text-zinc-500">Current Ride</span>
+              <span className="font-semibold">0</span>
+            </div>
+          </div>
+
+          <button
+            onClick={fetchActiveRide}
+            className="mt-8 w-full rounded-2xl bg-zinc-900 py-4 text-white font-semibold hover:bg-black transition"
+          >
+            Refresh
+          </button>
+
+          <button
+            onClick={() => router.push("/")}
+            className="mt-3 w-full rounded-2xl border border-zinc-300 py-4 font-semibold text-zinc-700 hover:bg-zinc-100 transition"
+          >
+            Back to Dashboard
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+  if (booking?.bookingStatus === "completed") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-black flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden"
+        >
+          <div className="bg-emerald-600 px-8 py-10 flex flex-col items-center">
+            <div className="h-24 w-24 rounded-full bg-white flex items-center justify-center shadow-lg">
+              <svg
+                className="w-12 h-12 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={3}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            <h1 className="mt-6 text-3xl font-bold text-white">
+              Ride Completed
+            </h1>
+
+            <p className="mt-2 text-emerald-100 text-center">
+              Thank you! The trip has been completed successfully.
+            </p>
+          </div>
+
+          <div className="p-8 space-y-5">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl bg-zinc-100 p-4">
+                <p className="text-xs text-zinc-500">Fare</p>
+                <p className="text-2xl font-bold">₹{booking?.fare}</p>
+              </div>
+
+              <div className="rounded-2xl bg-zinc-100 p-4">
+                <p className="text-xs text-zinc-500">Payment</p>
+                <p className="text-lg font-semibold text-emerald-600">
+                  {booking?.paymentStatus}
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Customer
+              </p>
+              <p className="mt-1 font-semibold">{booking?.user?.name}</p>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Pickup
+              </p>
+              <p className="mt-1 text-sm">{booking?.pickUpAddress}</p>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Drop
+              </p>
+              <p className="mt-1 text-sm">{booking?.dropAddress}</p>
+            </div>
+
+            <button
+              onClick={() => router.push("/")}
+              className="w-full rounded-2xl bg-zinc-900 py-4 text-white font-semibold hover:bg-black transition"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
   const cfg = STATUS_LABEL[booking?.bookingStatus! ?? "confirmed"];
   const router = useRouter();
   if (showChat) {
