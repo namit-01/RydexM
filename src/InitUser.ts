@@ -3,9 +3,9 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import useGetMe from "./hooks/useGetMe";
 const InitUser = () => {
-  // const { status } = useSession();
+  const { status } = useSession();
 
-  // useGetMe(status == "authenticated");
+  useGetMe(status == "authenticated");
   return null;
 };
 
