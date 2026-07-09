@@ -137,7 +137,7 @@ const Page = () => {
       </div>
     );
   }
-  if (!userData._id) {
+  if (!userData) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         Please login first
