@@ -86,6 +86,7 @@ const Page = () => {
       console.log(err);
     }
   };
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchActiveRide();
@@ -133,6 +134,13 @@ const Page = () => {
             Loading Ride...
           </p>
         </div>
+      </div>
+    );
+  }
+  if (!userData._id) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Please login first
       </div>
     );
   }
