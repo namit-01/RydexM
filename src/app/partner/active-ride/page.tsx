@@ -69,6 +69,19 @@ const Page = () => {
   const [dropPos, setDropPos] = useState<[number, number] | null>(null);
   const [showChat, setShowChat] = useState(false);
   const { userData } = useSelector((state: any) => state.user);
+  /* pickup OTP */
+
+  const [otpMode, setOtpMode] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [loadingOtp, setLoadingOtp] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpError, setOtpError] = useState("");
+
+  /* Drop OTP */
+  const [dropOtpMode, setDropOtpMode] = useState(false);
+  const [dropOtp, setDropOtp] = useState("");
+  const [loadingDropOtp, setLoadingDropOtp] = useState(false);
+  const [dropOtpError, setDropOtpError] = useState("");
   const fetchActiveRide = async () => {
     try {
       setLoading(true);
@@ -148,6 +161,88 @@ const Page = () => {
       />
     );
   }
+  if (booking?.bookingStatus === "completed") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-950 via-zinc-900 to-black flex items-center justify-center p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-lg rounded-3xl bg-white shadow-2xl overflow-hidden"
+        >
+          <div className="bg-emerald-600 px-8 py-10 flex flex-col items-center">
+            <div className="h-24 w-24 rounded-full bg-white flex items-center justify-center shadow-lg">
+              <svg
+                className="w-12 h-12 text-emerald-600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={3}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+
+            <h1 className="mt-6 text-3xl font-bold text-white">
+              Ride Completed
+            </h1>
+
+            <p className="mt-2 text-emerald-100 text-center">
+              Thank you! The trip has been completed successfully.
+            </p>
+          </div>
+
+          <div className="p-8 space-y-5">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-2xl bg-zinc-100 p-4">
+                <p className="text-xs text-zinc-500">Fare</p>
+                <p className="text-2xl font-bold">₹{booking?.fare}</p>
+              </div>
+
+              <div className="rounded-2xl bg-zinc-100 p-4">
+                <p className="text-xs text-zinc-500">Payment</p>
+                <p className="text-lg font-semibold text-emerald-600">
+                  {booking?.paymentStatus}
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Customer
+              </p>
+              <p className="mt-1 font-semibold">{booking?.user?.name}</p>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Pickup
+              </p>
+              <p className="mt-1 text-sm">{booking?.pickUpAddress}</p>
+            </div>
+
+            <div className="rounded-2xl border border-zinc-200 p-4">
+              <p className="text-xs uppercase tracking-wider text-zinc-500">
+                Drop
+              </p>
+              <p className="mt-1 text-sm">{booking?.dropAddress}</p>
+            </div>
+
+            <button
+              onClick={() => router.push("/")}
+              className="w-full rounded-2xl bg-zinc-900 py-4 text-white font-semibold hover:bg-black transition"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-zinc-100 text-zinc-900 overflow-x-hidden">
       {/* Left Map */}
@@ -223,11 +318,228 @@ const Page = () => {
             >
               Chat with Customer
             </button>
+            {booking?.bookingStatus === "confirmed" && !otpVerified && (
+              <div className="space-y-3">
+                {!otpMode ? (
+                  <button
+                    onClick={() => setOtpMode(true)}
+                    className="w-full rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700"
+                  >
+                    Start Ride
+                  </button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl border border-zinc-200 p-5 space-y-4"
+                  >
+                    <h3 className="text-lg font-semibold">Verify Pickup OTP</h3>
 
-            {booking?.bookingStatus === "confirmed" && (
-              <button className="w-full rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700">
-                Start Ride
-              </button>
+                    <p className="text-sm text-zinc-500">
+                      Ask the customer for the pickup OTP before starting the
+                      ride.
+                    </p>
+
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={otp}
+                      onChange={(e) =>
+                        setOtp(e.target.value.replace(/\D/g, ""))
+                      }
+                      placeholder="Enter 6 digit OTP"
+                      className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none focus:border-emerald-500"
+                    />
+
+                    {otpError && (
+                      <p className="text-sm text-red-500">{otpError}</p>
+                    )}
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={
+                          // Call Send OTP API here
+                          async () => {
+                            try {
+                              const bookingId = booking?._id;
+
+                              const { data } = await axios.post(
+                                "/api/partner/bookings/otp/pickup/send",
+                                { bookingId },
+                              );
+                              console.log(data);
+                            } catch (err) {
+                              console.log(err.response?.status);
+                              console.log(err.response?.data);
+                            }
+                          }
+                        }
+                        className="flex-1 rounded-xl border border-zinc-300 py-3 font-semibold hover:bg-zinc-100"
+                      >
+                        Send OTP
+                      </button>
+
+                      <button
+                        disabled={loadingOtp}
+                        onClick={async () => {
+                          try {
+                            setLoadingOtp(true);
+                            setOtpError("");
+
+                            // Verify OTP API
+                            // await axios.post("/api/partner/verify-pickup-otp", {
+                            //   bookingId: booking?._id,
+                            //   otp,
+                            // });
+
+                            const bookingId = booking?._id;
+
+                            const { data } = await axios.post(
+                              "/api/partner/bookings/otp/pickup/verify",
+                              { bookingId, otp },
+                            );
+
+                            setOtpVerified(true);
+                            setOtpMode(false);
+
+                            // fetchActiveRide();
+                          } catch (err: any) {
+                            setOtpError("Invalid OTP");
+                          } finally {
+                            setLoadingOtp(false);
+                          }
+                        }}
+                        className="flex-1 rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700 disabled:opacity-60"
+                      >
+                        {loadingOtp ? "Verifying..." : "Verify OTP"}
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setOtpMode(false);
+                        setOtp("");
+                        setOtpError("");
+                      }}
+                      className="w-full text-sm text-zinc-500 hover:text-zinc-900"
+                    >
+                      Cancel
+                    </button>
+                  </motion.div>
+                )}
+              </div>
+            )}
+            {booking?.bookingStatus === "started" && (
+              <div className="space-y-3">
+                {!dropOtpMode ? (
+                  <button
+                    onClick={() => setDropOtpMode(true)}
+                    className="w-full rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700"
+                  >
+                    Complete Ride
+                  </button>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl border border-zinc-200 p-5 space-y-4"
+                  >
+                    <h3 className="text-lg font-semibold">Verify Drop OTP</h3>
+
+                    <p className="text-sm text-zinc-500">
+                      Ask the customer for the pickup OTP before starting the
+                      ride.
+                    </p>
+
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={dropOtp}
+                      onChange={(e) =>
+                        setDropOtp(e.target.value.replace(/\D/g, ""))
+                      }
+                      placeholder="Enter 6 digit OTP"
+                      className="w-full rounded-xl border border-zinc-300 px-4 py-3 outline-none focus:border-emerald-500"
+                    />
+
+                    {otpError && (
+                      <p className="text-sm text-red-500">{otpError}</p>
+                    )}
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={
+                          // Call Send OTP API here
+                          async () => {
+                            try {
+                              const bookingId = booking?._id;
+
+                              const { data } = await axios.post(
+                                "/api/partner/bookings/otp/drop/send",
+                                { bookingId },
+                              );
+                              console.log(data);
+                            } catch (err) {
+                              console.log(err.response?.status);
+                              console.log(err.response?.data);
+                            }
+                          }
+                        }
+                        className="flex-1 rounded-xl border border-zinc-300 py-3 font-semibold hover:bg-zinc-100"
+                      >
+                        Send OTP
+                      </button>
+
+                      <button
+                        disabled={loadingOtp}
+                        onClick={async () => {
+                          try {
+                            setLoadingOtp(true);
+                            setOtpError("");
+
+                            // Verify OTP API
+                            // await axios.post("/api/partner/verify-pickup-otp", {
+                            //   bookingId: booking?._id,
+                            //   otp,
+                            // });
+
+                            const bookingId = booking?._id;
+                            const otp = dropOtp;
+                            const { data } = await axios.post(
+                              "/api/partner/bookings/otp/drop/verify",
+                              { bookingId, otp },
+                            );
+
+                            setDropOtp(false);
+
+                            // fetchActiveRide();
+                          } catch (err: any) {
+                            setOtpError("Invalid OTP");
+                            console.log(err.response?.status);
+                            console.log(err.response?.data);
+                          } finally {
+                            setLoadingOtp(false);
+                          }
+                        }}
+                        className="flex-1 rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700 disabled:opacity-60"
+                      >
+                        {loadingOtp ? "Verifying..." : "Verify OTP"}
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setOtpMode(false);
+                        setOtp("");
+                        setOtpError("");
+                      }}
+                      className="w-full text-sm text-zinc-500 hover:text-zinc-900"
+                    >
+                      Cancel
+                    </button>
+                  </motion.div>
+                )}
+              </div>
             )}
           </div>
         </div>

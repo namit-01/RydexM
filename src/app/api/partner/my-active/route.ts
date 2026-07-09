@@ -18,7 +18,6 @@ export async function GET(req: NextRequest) {
     if (user.role == "partner") {
       booking = await Booking.findOne({
         driver: user._id,
-        bookingStatus: { $in: ["confirmed", "started"] },
       }).populate("user vehicle driver");
     } else {
       booking = await Booking.findOne({

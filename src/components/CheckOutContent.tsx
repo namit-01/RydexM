@@ -376,51 +376,50 @@ const CheckOutContent = () => {
                     </motion.button>
                   </motion.div>
                 )}
-                {status == "requested" ||
-                  (status == "rejected" && (
-                    <motion.div
-                      key="requested"
-                      initial={{ opacity: 0, scale: 0.96 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.35 }}
-                      className="flex flex-col flex-1 items-center justify-center gap-6 text-center"
-                    >
-                      <div className="relative">
-                        <motion.div
-                          animate={{
-                            scale: [1, 1.5, 1],
-                            opacity: [0.3, 0, 0.3],
-                          }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                          className="absolute inset-0 rounded-full bg-zinc-900"
-                        />
-
-                        <div className="relative w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center">
-                          <Loader2
-                            size={28}
-                            className="text-zinc-900 animate-spin"
-                          />
-                        </div>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-black text-zinc-900 mb-1">
-                          Finding Your Driver
-                        </h3>
-                        <p className="text-zinc-400 text-sm font-medium">
-                          Waiting for driver to accept…
-                        </p>
-                      </div>
-
+                {(status == "requested" || status == "rejected") && (
+                  <motion.div
+                    key="requested"
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="flex flex-col flex-1 items-center justify-center gap-6 text-center"
+                  >
+                    <div className="relative">
                       <motion.div
-                        whileTap={{ scale: 0.95 }}
-                        className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 transition-colors border border-zinc-200 hover:border-zinc-400 px-4 py-2.5 rounded-xl"
-                        onClick={handleCancel}
-                      >
-                        <XCircle size={13} /> Cancel Request
-                      </motion.div>
+                        animate={{
+                          scale: [1, 1.5, 1],
+                          opacity: [0.3, 0, 0.3],
+                        }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                        className="absolute inset-0 rounded-full bg-zinc-900"
+                      />
+
+                      <div className="relative w-20 h-20 rounded-full bg-zinc-100 border-2 border-zinc-200 flex items-center justify-center">
+                        <Loader2
+                          size={28}
+                          className="text-zinc-900 animate-spin"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-zinc-900 mb-1">
+                        Finding Your Driver
+                      </h3>
+                      <p className="text-zinc-400 text-sm font-medium">
+                        Waiting for driver to accept…
+                      </p>
+                    </div>
+
+                    <motion.div
+                      whileTap={{ scale: 0.95 }}
+                      className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 transition-colors border border-zinc-200 hover:border-zinc-400 px-4 py-2.5 rounded-xl"
+                      onClick={handleCancel}
+                    >
+                      <XCircle size={13} /> Cancel Request
                     </motion.div>
-                  ))}
+                  </motion.div>
+                )}
                 {status == "awaiting_payment" && (
                   <motion.div
                     key="awaiting_payment"

@@ -8,7 +8,6 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import RideChat from "@/components/RideChat";
 import { useSelector } from "react-redux";
-import { getSocket } from "@/lib/socket";
 const LiveRideMap = dynamic(() => import("@/components/LiveRideMap"), {
   ssr: false,
 });
@@ -92,18 +91,12 @@ const Page = () => {
   }, []);
   useEffect(() => {
     if (!navigator.geolocation) return;
-    if (userData?.role !== "partner") return;
-    const socket = getSocket();
+
     const watchId = navigator.geolocation.watchPosition(
       (pos) => {
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         setDriverPos([lat, lon]);
-        socket.emit("driver-location-update", {
-          bookingId: booking?._id,
-          latitude: lat,
-          longitude: lon,
-        });
       },
       (error) => {
         console.log("gps error", error);
@@ -115,19 +108,7 @@ const Page = () => {
       navigator.geolocation.clearWatch(watchId);
     };
   }, []);
-  useEffect(() => {
-    if (userData?.role !== "user") return;
 
-    const socket = getSocket();
-
-    socket.on("driver-location-update", (data) => {
-      setDriverPos([data.latitude, data.longitude]);
-    });
-
-    return () => {
-      socket.off("driver-location-update");
-    };
-  }, [userData?.role]);
   const MAP_STATUS: Record<
     BookingStatus,
     "arriving" | "ongoing" | "completed"
@@ -240,18 +221,13 @@ const Page = () => {
               onClick={() => setShowChat(true)}
               className="w-full rounded-xl bg-zinc-900 py-3 text-white font-semibold transition hover:bg-zinc-800"
             >
-              <button
-                onClick={() => setShowChat(true)}
-                className="w-full rounded-xl bg-zinc-900 py-3 text-white font-semibold transition hover:bg-zinc-800"
-              >
-                {userData?.role === "partner"
-                  ? "Chat with customer"
-                  : "Chat with driver"}
-              </button>
+              {userData?.role === "partner"
+                ? "Chat with customer"
+                : "Chat with driver"}
             </button>
 
             {booking?.bookingStatus === "confirmed" &&
-              userData.role == "partner" && (
+              userData?.role == "partner" && (
                 <button className="w-full rounded-xl bg-emerald-600 py-3 text-white font-semibold hover:bg-emerald-700">
                   Start Ride
                 </button>

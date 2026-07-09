@@ -1,6 +1,7 @@
 import React from "react";
 
 const page = () => {
+    
   return (
     <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
       <section className="max-w-6xl mx-auto px-6 py-20">

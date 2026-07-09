@@ -11,7 +11,7 @@ import { ChevronRight, ChevronRightIcon, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { setUserData } from "@/redux/userSlice";
 import axios from "axios";
-const Nav_items = ["Home", "aboutus", "Contact"];
+const Nav_items = ["Home", "aboutus", "Contact", "Active"];
 const Nav = () => {
   const pathName = usePathname();
   const router = useRouter();
@@ -85,25 +85,32 @@ const Nav = () => {
                 </Link>
               </>
             ) : (
-              Nav_items.map((i, index) => {
-                let href;
-                if (i == "Home") {
-                  href = `/`;
-                } else {
-                  href = `/${i.toLowerCase()}`;
-                }
-
-                const active = href == pathName;
-                return (
-                  <Link
-                    key={index}
-                    href={href}
-                    className={`text-sm  font-medium transition ${active ? "text-white " : "text-gray-400 hover:text-white"}`}
-                  >
-                    {i}
-                  </Link>
-                );
-              })
+              <>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/"}
+                >
+                  Home
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/aboutus"}
+                >
+                  About us
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/contact"}
+                >
+                  Contact
+                </Link>
+                <Link
+                  className="relative text-sm font-medium text-gray-300 hover:text-white transition"
+                  href={"/active"}
+                >
+                  Active Ride
+                </Link>
+              </>
             )}
           </div>
           <div className="flex items-center gap-3 relative">
